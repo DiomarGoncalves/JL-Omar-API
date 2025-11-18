@@ -19,15 +19,17 @@ export interface Truck {
 
 export interface Service {
   id: string;
-  truck_id: string;
+  truckId: string;
   equipment: string;
-  service_date: string;
+  serviceDate: string;
   of: string;
   meter: number;
   value: number;
   status: ServiceStatus;
-  observations?: string | null;
+  observations?: string;
+  chassis?: string;
 }
+
 
 export interface Material {
   id: string;

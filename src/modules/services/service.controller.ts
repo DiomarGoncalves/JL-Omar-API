@@ -7,7 +7,9 @@ export class ServiceController {
   async list(req: Request, res: Response) {
     try {
       const { truckId } = req.query;
-      const services = await service.list({ truckId: truckId ? String(truckId) : undefined });
+      const services = await service.list({
+        truckId: truckId ? String(truckId) : undefined,
+      });
       return res.json(services);
     } catch {
       return res.status(500).json({ message: "Erro ao listar serviços" });
@@ -18,7 +20,8 @@ export class ServiceController {
     try {
       const { id } = req.params;
       const s = await service.getById(id);
-      if (!s) return res.status(404).json({ message: "Serviço não encontrado" });
+      if (!s)
+        return res.status(404).json({ message: "Serviço não encontrado" });
       return res.json(s);
     } catch {
       return res.status(500).json({ message: "Erro ao buscar serviço" });
@@ -27,10 +30,29 @@ export class ServiceController {
 
   async create(req: Request, res: Response) {
     try {
-      const { truckId, equipment, serviceDate, of, meter, value, status, observations } = req.body;
-      if (!truckId || !equipment || !serviceDate || !of || meter == null || value == null || !status) {
+      const {
+        truckId,
+        equipment,
+        serviceDate,
+        of,
+        meter,
+        value,
+        status,
+        observations,
+        chassis
+      } = req.body;
+      if (
+        !truckId ||
+        !equipment ||
+        !serviceDate ||
+        !of ||
+        meter == null ||
+        value == null ||
+        !status
+      ) {
         return res.status(400).json({
-          message: "truckId, equipment, serviceDate, of, meter, value e status são obrigatórios"
+          message:
+            "truckId, equipment, serviceDate, of, meter, value e status são obrigatórios",
         });
       }
       const created = await service.create({
@@ -41,7 +63,8 @@ export class ServiceController {
         meter: Number(meter),
         value: Number(value),
         status,
-        observations
+        observations,
+        chassis,
       });
       return res.status(201).json(created);
     } catch {
@@ -53,7 +76,8 @@ export class ServiceController {
     try {
       const { id } = req.params;
       const updated = await service.update(id, req.body);
-      if (!updated) return res.status(404).json({ message: "Serviço não encontrado" });
+      if (!updated)
+        return res.status(404).json({ message: "Serviço não encontrado" });
       return res.json(updated);
     } catch {
       return res.status(500).json({ message: "Erro ao atualizar serviço" });
@@ -108,14 +132,18 @@ export class ServiceController {
 
   async updateMaterial(req: Request, res: Response) {
     try {
-      const { id: serviceId, materialId } = req.params as { id: string; materialId: string };
+      const { id: serviceId, materialId } = req.params as {
+        id: string;
+        materialId: string;
+      };
       const { name, quantity, observations } = req.body || {};
       const updated = await service.updateMaterial(serviceId, materialId, {
         name,
         quantity: quantity != null ? Number(quantity) : undefined,
         observations,
       });
-      if (!updated) return res.status(404).json({ message: "Material não encontrado" });
+      if (!updated)
+        return res.status(404).json({ message: "Material não encontrado" });
       return res.json(updated);
     } catch (error) {
       console.error("Erro ao atualizar material:", error);
@@ -125,7 +153,10 @@ export class ServiceController {
 
   async deleteMaterial(req: Request, res: Response) {
     try {
-      const { id: serviceId, materialId } = req.params as { id: string; materialId: string };
+      const { id: serviceId, materialId } = req.params as {
+        id: string;
+        materialId: string;
+      };
       await service.deleteMaterial(serviceId, materialId);
       return res.status(204).send();
     } catch (error) {
