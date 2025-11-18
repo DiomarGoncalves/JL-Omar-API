@@ -3,15 +3,37 @@ import { ServiceService } from "./service.service";
 
 const service = new ServiceService();
 
+function mapServiceRow(row: any) {
+  if (!row) return null;
+
+  return {
+    id: row.id,
+    truckId: row.truck_id,
+    equipment: row.equipment,
+    serviceDate: row.service_date,
+    of: row.of,
+    meter: Number(row.meter),
+    value: Number(row.value),
+    status: row.status,
+    observations: row.observations,
+    chassis: row.chassis,
+    createdAt: row.created_at,
+  };
+}
+
 export class ServiceController {
   async list(req: Request, res: Response) {
     try {
       const { truckId } = req.query;
+
       const services = await service.list({
         truckId: truckId ? String(truckId) : undefined,
       });
-      return res.json(services);
-    } catch {
+
+      // 🔹 Agora devolve tudo em camelCase
+      return res.json(services.map(mapServiceRow));
+    } catch (error) {
+      console.error("Erro ao listar serviços:", error);
       return res.status(500).json({ message: "Erro ao listar serviços" });
     }
   }
@@ -19,11 +41,15 @@ export class ServiceController {
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const s = await service.getById(id);
-      if (!s)
+      const found = await service.getById(id);
+
+      if (!found) {
         return res.status(404).json({ message: "Serviço não encontrado" });
-      return res.json(s);
-    } catch {
+      }
+
+      return res.json(mapServiceRow(found));
+    } catch (error) {
+      console.error("Erro ao buscar serviço:", error);
       return res.status(500).json({ message: "Erro ao buscar serviço" });
     }
   }
@@ -39,7 +65,7 @@ export class ServiceController {
         value,
         status,
         observations,
-        chassis
+        chassis,
       } = req.body;
       if (
         !truckId ||
@@ -66,7 +92,9 @@ export class ServiceController {
         observations,
         chassis,
       });
-      return res.status(201).json(created);
+
+      // 🔹 em vez de retornar a linha raw do banco:
+      return res.status(201).json(mapServiceRow(created));
     } catch {
       return res.status(500).json({ message: "Erro ao criar serviço" });
     }
@@ -78,7 +106,7 @@ export class ServiceController {
       const updated = await service.update(id, req.body);
       if (!updated)
         return res.status(404).json({ message: "Serviço não encontrado" });
-      return res.json(updated);
+      return res.json(mapServiceRow(updated));
     } catch {
       return res.status(500).json({ message: "Erro ao atualizar serviço" });
     }
