@@ -80,20 +80,28 @@ export class ServiceController {
     }
   }
 
-  async addMaterial(req: Request, res: Response) {
+   async addMaterial(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { name, quantity, unit_price } = req.body;
-      if (!name || quantity == null || unit_price == null) {
-        return res.status(400).json({ message: "name, quantity e unit_price são obrigatórios" });
+      const { name, quantity, observations } = req.body || {};
+
+      // Agora só exigimos name e quantity
+      if (!name || quantity == null) {
+        return res.status(400).json({
+          message: "name e quantity são obrigatórios",
+          receivedBody: req.body,
+        });
       }
+
       const material = await service.addMaterial(id, {
         name,
         quantity: Number(quantity),
-        unit_price: Number(unit_price)
+        observations,
       });
+
       return res.status(201).json(material);
-    } catch {
+    } catch (error) {
+      console.error("Erro ao adicionar material:", error);
       return res.status(500).json({ message: "Erro ao adicionar material" });
     }
   }

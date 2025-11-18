@@ -88,10 +88,19 @@ export class ServiceService {
     `;
   }
 
-  async addMaterial(serviceId: string, data: { name: string; quantity: number; unit_price: number }): Promise<Material> {
+  async addMaterial(
+    serviceId: string,
+    data: { name: string; quantity: number; observations?: string }
+  ): Promise<Material> {
     const rows = await sql<Material[]>`
-      INSERT INTO materials (service_id, name, quantity, unit_price)
-      VALUES (${serviceId}, ${data.name}, ${data.quantity}, ${data.unit_price})
+      INSERT INTO materials (service_id, name, quantity, unit_price, observations)
+      VALUES (
+        ${serviceId},
+        ${data.name},
+        ${data.quantity},
+        0, 
+        ${data.observations ?? null}
+      )
       RETURNING *
     `;
     return rows[0];

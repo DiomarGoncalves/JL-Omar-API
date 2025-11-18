@@ -34,7 +34,8 @@ export interface Material {
   service_id: string;
   name: string;
   quantity: number;
-  unit_price: number;
+  unit_price: number;          
+  observations?: string | null;
 }
 
 export interface Measurement {
