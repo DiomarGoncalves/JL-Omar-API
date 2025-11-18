@@ -12,5 +12,7 @@ router.put("/:id", authMiddleware, (req, res) => controller.update(req, res));
 router.delete("/:id", authMiddleware, (req, res) => controller.delete(req, res));
 router.get("/:id/materials", authMiddleware, (req, res) => controller.listMaterials(req, res));
 router.post("/:id/materials", authMiddleware, (req, res) => controller.addMaterial(req, res));
+router.put("/:id/materials/:materialId", authMiddleware, (req, res) => controller.updateMaterial(req, res));
+router.delete("/:id/materials/:materialId", authMiddleware, (req, res) => controller.deleteMaterial(req, res));
 
 export default router;

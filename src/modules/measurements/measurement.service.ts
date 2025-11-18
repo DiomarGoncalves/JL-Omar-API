@@ -45,4 +45,41 @@ export class MeasurementService {
     `;
     return rows[0];
   }
+
+  async update(
+    id: string,
+    data: Partial<{
+      truckId: string;
+      serviceId?: string;
+      measurementDate: string;
+      technician: string;
+      valueBefore: number;
+      valueAfter: number;
+      observations: string;
+    }>
+  ): Promise<Measurement | null> {
+    const currentRows = await sql<Measurement[]>`SELECT * FROM measurements WHERE id = ${id}`;
+    const current = currentRows[0];
+    if (!current) return null;
+
+    const rows = await sql<Measurement[]>`
+      UPDATE measurements
+      SET
+        truck_id = ${data.truckId ?? current.truck_id},
+        service_id = ${data.serviceId ?? current.service_id ?? null},
+        measurement_date = ${data.measurementDate ?? current.measurement_date},
+        technician = ${data.technician ?? current.technician},
+        value_before = ${data.valueBefore ?? current.value_before},
+        value_after = ${data.valueAfter ?? current.value_after},
+        observations = ${data.observations ?? current.observations ?? null}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return rows[0] || null;
+  }
+
+  async delete(id: string): Promise<void> {
+    await sql`DELETE FROM measurements WHERE id = ${id}`;
+  }
 }

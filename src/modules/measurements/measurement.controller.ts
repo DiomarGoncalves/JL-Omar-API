@@ -41,4 +41,39 @@ export class MeasurementController {
       return res.status(500).json({ message: "Erro ao criar medição" });
     }
   }
+
+  async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const payload = req.body || {};
+      // convert numeric fields when present
+      if (payload.valueBefore != null) payload.valueBefore = Number(payload.valueBefore);
+      if (payload.valueAfter != null) payload.valueAfter = Number(payload.valueAfter);
+
+      const updated = await service.update(id, {
+        truckId: payload.truckId,
+        serviceId: payload.serviceId,
+        measurementDate: payload.measurementDate,
+        technician: payload.technician,
+        valueBefore: payload.valueBefore,
+        valueAfter: payload.valueAfter,
+        observations: payload.observations,
+      });
+
+      if (!updated) return res.status(404).json({ message: "Medição não encontrada" });
+      return res.json(updated);
+    } catch {
+      return res.status(500).json({ message: "Erro ao atualizar medição" });
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      await service.delete(id);
+      return res.status(204).send();
+    } catch {
+      return res.status(500).json({ message: "Erro ao excluir medição" });
+    }
+  }
 }

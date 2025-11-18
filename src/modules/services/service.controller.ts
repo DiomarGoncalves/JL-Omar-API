@@ -80,7 +80,7 @@ export class ServiceController {
     }
   }
 
-   async addMaterial(req: Request, res: Response) {
+  async addMaterial(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const { name, quantity, observations } = req.body || {};
@@ -103,6 +103,34 @@ export class ServiceController {
     } catch (error) {
       console.error("Erro ao adicionar material:", error);
       return res.status(500).json({ message: "Erro ao adicionar material" });
+    }
+  }
+
+  async updateMaterial(req: Request, res: Response) {
+    try {
+      const { id: serviceId, materialId } = req.params as { id: string; materialId: string };
+      const { name, quantity, observations } = req.body || {};
+      const updated = await service.updateMaterial(serviceId, materialId, {
+        name,
+        quantity: quantity != null ? Number(quantity) : undefined,
+        observations,
+      });
+      if (!updated) return res.status(404).json({ message: "Material não encontrado" });
+      return res.json(updated);
+    } catch (error) {
+      console.error("Erro ao atualizar material:", error);
+      return res.status(500).json({ message: "Erro ao atualizar material" });
+    }
+  }
+
+  async deleteMaterial(req: Request, res: Response) {
+    try {
+      const { id: serviceId, materialId } = req.params as { id: string; materialId: string };
+      await service.deleteMaterial(serviceId, materialId);
+      return res.status(204).send();
+    } catch (error) {
+      console.error("Erro ao excluir material:", error);
+      return res.status(500).json({ message: "Erro ao excluir material" });
     }
   }
 }

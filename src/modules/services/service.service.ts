@@ -105,4 +105,25 @@ export class ServiceService {
     `;
     return rows[0];
   }
+
+  async updateMaterial(
+    serviceId: string,
+    materialId: string,
+    data: Partial<{ name: string; quantity: number; observations: string }>
+  ): Promise<Material | null> {
+    const rows = await sql<Material[]>`
+      UPDATE materials
+      SET
+        name = ${data.name ?? sql`name`},
+        quantity = ${data.quantity ?? sql`quantity`},
+        observations = ${data.observations ?? sql`observations`}
+      WHERE id = ${materialId} AND service_id = ${serviceId}
+      RETURNING *
+    `;
+    return rows[0] || null;
+  }
+
+  async deleteMaterial(serviceId: string, materialId: string): Promise<void> {
+    await sql`DELETE FROM materials WHERE id = ${materialId} AND service_id = ${serviceId}`;
+  }
 }
