@@ -8,7 +8,7 @@ import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 const router = Router();
 
 router.get("/", (req, res) => {
-  res.json({ message: "TruckControl API - OK" });
+  res.json({ message: "JL Omar (controle de produção) API - OK" });
 });
 
 router.use("/auth", authRoutes);

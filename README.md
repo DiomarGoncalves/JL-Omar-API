@@ -1,4 +1,4 @@
-# TruckControl API (Vercel + Neon)
+# JL Omar (controle de produção) API (Vercel + Neon)
 
 API em Node + TypeScript + Express, pensada para rodar na Vercel com banco PostgreSQL serverless da Neon.
 
