@@ -5,19 +5,21 @@ const service = new MeasurementService();
 
 export class MeasurementController {
   async list(req: Request, res: Response) {
-    try {
-      const { truckId, serviceId, startDate, endDate } = req.query;
-      const measurements = await service.list({
-        truckId: truckId ? String(truckId) : undefined,
-        serviceId: serviceId ? String(serviceId) : undefined,
-        startDate: startDate ? String(startDate) : undefined,
-        endDate: endDate ? String(endDate) : undefined
-      });
-      return res.json(measurements);
-    } catch {
-      return res.status(500).json({ message: "Erro ao listar medições" });
-    }
+  try {
+    const { truckId, serviceId, startDate, endDate } = req.query;
+    const measurements = await service.list({
+      truckId: truckId ? String(truckId) : undefined,
+      serviceId: serviceId ? String(serviceId) : undefined,
+      startDate: startDate ? String(startDate) : undefined,
+      endDate: endDate ? String(endDate) : undefined
+    });
+    return res.json(measurements);
+  } catch (error) {
+    console.error("❌ Erro no MeasurementController.list:", error);
+    return res.status(500).json({ message: "Erro ao listar medições" });
   }
+}
+
 
   async create(req: Request, res: Response) {
     try {
